@@ -3,109 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Video Uploader with Ads</title>
+    <title>Smile Video Player</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; box-sizing: border-box; }
-        h2 { text-align: center; color: #333; font-size: 20px; }
-        input, textarea, button { width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { background: #0088cc; color: white; border: none; font-size: 16px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #006699; }
-        button:disabled { background: #cccccc; cursor: not-allowed; }
-        .ad-box { background: #fff3cd; border: 1px solid #ffeeba; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-size: 14px; }
-        .ad-box a { color: #856404; font-weight: bold; text-decoration: underline; display: block; margin-top: 5px; }
-        #status { text-align: center; font-weight: bold; margin-top: 10px; font-size: 14px; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 { color: #0088cc; }
+        .ad-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .ad-btn.watched {
+            background-color: #4CAF50;
+        }
+        .watch-btn {
+            display: none;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        p { font-size: 14px; color: #666; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Channel သို့ ဗီဒီယိုတင်ရန်</h2>
-    
-    <input type="file" id="videoFile" accept="video/*">
-    <textarea id="captionText" placeholder="Caption ရေးပါ..." rows="3"></textarea>
+    <div class="container">
+        <h2>🎥 Smile Video Player</h2>
+        <p>ဗီဒီယိုကြည့်ရှုရန် အောက်ပါကြော်ငြာလင့်ခ် ၂ ခုကို အရင်နှိပ်ပြီး ကြည့်ရှုပေးပါ။</p>
 
-    <div class="ad-box">
-        ⚠️ ဗီဒီယိုမတင်ခင် ကြော်ငြာလင့်ခ်များကို အရင်နှိပ်ပြီး ကြည့်ရှုပေးပါ:<br>
-        <a href="https://www.profitableratecpmnetwork.com/ket1i5d7eg?key=4fd15bb6bdffdc535b455feca70aab53" target="_blank" onclick="checkAd1()">👉 ကြော်ငြာလင့်ခ် (၁) ကြည့်ရန်</a>
-        <a href="https://www.profitableratecpmnetwork.com/cdg1zbyr5a?key=ca1969582518a90e68dca98b3e4564e9" target="_blank" onclick="checkAd2()">👉 ကြော်ငြာလင့်ခ် (၂) ကြည့်ရန်</a>
+        <!-- Ad Link 1 -->
+        <a href="https://your-adsterra-link1.com" target="_blank" class="ad-btn" id="ad1" onclick="markWatched(1)">ကြော်ငြာလင့်ခ် (၁) ကြည့်ရန်</a>
+        
+        <!-- Ad Link 2 -->
+        <a href="https://your-adsterra-link2.com" target="_blank" class="ad-btn" id="ad2" onclick="markWatched(2)">ကြော်ငြာလင့်ခ် (၂) ကြည့်ရန်</a>
+
+        <!-- Video Watch Button (Hidden initially) -->
+        <a href="https://t.me/Smilevideo36" target="_blank" class="watch-btn" id="watchBtn">ဗီဒီယိုကြည့်ရန် နှိပ်ပါ</a>
     </div>
 
-    <button id="uploadBtn" onclick="uploadVideo()" disabled>ကြော်ငြာများ အရင်ကြည့်ပါ (Locked)</button>
-    <p id="status"></p>
-</div>
+    <script>
+        let ad1Watched = false;
+        let ad2Watched = false;
 
-<script>
-    let ad1Clicked = false;
-    let ad2Clicked = false;
-
-    function checkAd1() {
-        ad1Clicked = true;
-        updateButtonState();
-    }
-
-    function checkAd2() {
-        ad2Clicked = true;
-        updateButtonState();
-    }
-
-    function updateButtonState() {
-        if (ad1Clicked && ad2Clicked) {
-            const btn = document.getElementById('uploadBtn');
-            btn.disabled = false;
-            btn.innerText = "ဗီဒီယိုတင်မည်";
-            btn.style.background = "#28a745";
-        }
-    }
-
-    async function uploadVideo() {
-        if (!ad1Clicked || !ad2Clicked) {
-            alert("ကျေးဇူးပြု၍ ကြော်ငြာလင့်ခ် နှစ်ခုစလုံးကို အရင်နှိပ်ပြီး ကြည့်ရှုပါ");
-            return;
-        }
-
-        const workerUrl = "https://videadgentle-tooth-00ad.soe458773.workers.dev";
-        
-        const fileInput = document.getElementById('videoFile');
-        const captionInput = document.getElementById('captionText');
-        const status = document.getElementById('status');
-
-        if (fileInput.files.length === 0) {
-            alert("ကျေးဇူးပြု၍ ဗီဒီယိုဖိုင် ရွေးချယ်ပါ");
-            return;
-        }
-
-        let userCaption = captionInput.value;
-        let adsText = "\n\n🔗 ကြော်ငြာလင့်ခ် (၁): https://www.profitableratecpmnetwork.com/ket1i5d7eg?key=4fd15bb6bdffdc535b455feca70aab53\n🔗 ကြော်ငြာလင့်ခ် (၂): https://www.profitableratecpmnetwork.com/cdg1zbyr5a?key=ca1969582518a90e68dca98b3e4564e9";
-        let fullCaption = userCaption + adsText;
-
-        const formData = new FormData();
-        formData.append("video", fileInput.files[0]);
-        formData.append("caption", fullCaption);
-
-        status.innerText = "ဗီဒီယို တင်နေပါပြီ၊ ခဏစောင့်ပါ...";
-        status.style.color = "blue";
-
-        try {
-            let response = await fetch(workerUrl, {
-                method: "POST",
-                body: formData
-            });
-
-            let data = await response.json();
-            if (data.ok) {
-                status.innerText = "အောင်မြင်စွာ တင်ပြီးပါပြီ! ✅";
-                status.style.color = "green";
-            } else {
-                status.innerText = "အမှား: " + (data.description || "တင်၍မရပါ။");
-                status.style.color = "red";
+        function markWatched(adNumber) {
+            if (adNumber === 1) {
+                ad1Watched = true;
+                let btn1 = document.getElementById('ad1');
+                btn1.innerText = '✅ ကြော်ငြာ (၁) ကြည့်ပြီးပါပြီ';
+                btn1.classList.add('watched');
+            } else if (adNumber === 2) {
+                ad2Watched = true;
+                let btn2 = document.getElementById('ad2');
+                btn2.innerText = '✅ ကြော်ငြာ (၂) ကြည့်ပြီးပါပြီ';
+                btn2.classList.add('watched');
             }
-        } catch (error) {
-            status.innerText = "Error: " + error.message;
-            status.style.color = "red";
+
+            // Check if both ads are watched
+            if (ad1Watched && ad2Watched) {
+                document.getElementById('watchBtn').style.display = 'block';
+            }
         }
-    }
-</script>
+    </script>
 
 </body>
 </html>
