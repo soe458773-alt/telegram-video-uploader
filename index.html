@@ -22,7 +22,16 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        h2 { color: #0088cc; }
+        h2 { color: #0088cc; font-size: 20px; }
+        .video-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 15px;
+            background: #eef6ff;
+            padding: 10px;
+            border-radius: 5px;
+        }
         .ad-btn {
             display: block;
             width: 100%;
@@ -35,6 +44,7 @@
             font-size: 16px;
             cursor: pointer;
             text-decoration: none;
+            box-sizing: border-box;
         }
         .ad-btn.watched {
             background-color: #4CAF50;
@@ -51,6 +61,7 @@
             font-size: 16px;
             cursor: pointer;
             text-decoration: none;
+            box-sizing: border-box;
         }
         p { font-size: 14px; color: #666; }
     </style>
@@ -59,6 +70,7 @@
 
     <div class="container">
         <h2>🎥 Smile Video Player</h2>
+        <div id="videoTitleBox" class="video-title">ဗီဒီယိုကို ဖွင့်ရန် ကြော်ငြာကြည့်ပါ</div>
         <p>ဗီဒီယိုကြည့်ရှုရန် အောက်ပါကြော်ငြာလင့်ခ် ၂ ခုကို အရင်နှိပ်ပြီး ကြည့်ရှုပေးပါ။</p>
 
         <!-- Ad Link 1 -->
@@ -68,10 +80,19 @@
         <a href="https://www.profitableratecpmnetwork.com/ket1i5d7eg?key=4fd15bb6bdffdc535b455feca70aab53" target="_blank" class="ad-btn" id="ad2" onclick="markWatched(2)">ကြော်ငြာလင့်ခ် (၂) ကြည့်ရန်</a>
 
         <!-- Video Watch Button (Hidden initially) -->
-        <a href="https://t.me/Smilevideo36" target="_blank" class="watch-btn" id="watchBtn">ဗီဒီယိုကြည့်ရန် နှိပ်ပါ</a>
+        <a href="#" id="watchBtn" target="_blank" class="watch-btn">ဗီဒီယိုကြည့်ရန် နှိပ်ပါ</a>
     </div>
 
     <script>
+        // URL ထဲက ဗီဒီယိုအချက်အလက်များကို ဖတ်ယူခြင်း
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoUrl = urlParams.get('url');
+        const videoTitle = urlParams.get('title');
+
+        if (videoTitle) {
+            document.getElementById('videoTitleBox').innerText = decodeURIComponent(videoTitle);
+        }
+
         let ad1Watched = false;
         let ad2Watched = false;
 
@@ -88,9 +109,15 @@
                 btn2.classList.add('watched');
             }
 
-            // Check if both ads are watched
+            // ကြော်ငြာ ၂ ခုလုံးကြည့်ပြီးမှ ဗီဒီယိုလင့်ခ်ကို ပွင့်စေရန်
             if (ad1Watched && ad2Watched) {
-                document.getElementById('watchBtn').style.display = 'block';
+                let watchBtn = document.getElementById('watchBtn');
+                if (videoUrl) {
+                    watchBtn.href = decodeURIComponent(videoUrl);
+                } else {
+                    watchBtn.href = "https://t.me/Smilevideo36"; // Default channel link
+                }
+                watchBtn.style.display = 'block';
             }
         }
     </script>
